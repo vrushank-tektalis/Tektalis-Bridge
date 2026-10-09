@@ -11,18 +11,25 @@ export const WebSocketProvider = ({ children }) => {
     if (!isAuthenticated) return;
     const token = localStorage.getItem('accessToken');
     const ws = new WebSocket(`ws://${window.location.host}${url}?token=${token}`);
+    let destroyed = false;
     
     setSockets(prev => ({ ...prev, [name]: ws }));
 
     ws.onclose = () => {
-      setTimeout(() => connect(url, name), 3000);
+      if (!destroyed) {
+        setTimeout(() => connect(url, name), 3000);
+      }
     };
+
+    // Store destroy function alongside socket so disconnect can set the flag
+    ws._destroy = () => { destroyed = true; };
 
     return ws;
   }, [isAuthenticated]);
 
   const disconnect = useCallback((name) => {
     if (sockets[name]) {
+      sockets[name]._destroy?.();
       sockets[name].close();
       setSockets(prev => {
         const newSockets = { ...prev };
@@ -34,7 +41,10 @@ export const WebSocketProvider = ({ children }) => {
 
   useEffect(() => {
     return () => {
-      Object.values(sockets).forEach(ws => ws.close());
+      Object.values(sockets).forEach(ws => {
+        ws._destroy?.();
+        ws.close();
+      });
     };
   }, []);
 

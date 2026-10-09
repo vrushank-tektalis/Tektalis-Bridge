@@ -30,12 +30,14 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const res = await api.post('/auth/login', { email, password });
-      const { access_token, refresh_token, user: userData } = res.data;
+      const { access_token, refresh_token } = res.data;
       localStorage.setItem('accessToken', access_token);
       localStorage.setItem('refreshToken', refresh_token);
-      setUser(userData);
+      // Fetch actual user profile after obtaining tokens
+      const meRes = await api.get('/auth/me');
+      setUser(meRes.data);
       setIsAuthenticated(true);
-      return userData;
+      return meRes.data;
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Login failed');
       throw error;

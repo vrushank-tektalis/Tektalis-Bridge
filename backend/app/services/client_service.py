@@ -1,5 +1,7 @@
 from typing import Optional, List
 from fastapi import HTTPException
+from datetime import datetime
+from bson import ObjectId
 
 from app.repositories.base import UserRepository
 from app.repositories.client_repo import ClientRepository
@@ -74,10 +76,9 @@ class ClientService:
         return self._serialize(result)
 
     async def deactivate_client(self, user_id: str):
-        from datetime import datetime
         db = get_db()
         await db.users.update_one(
-            {"_id": __import__("bson").ObjectId(user_id)},
+            {"_id": ObjectId(user_id)},
             {"$set": {"is_active": False, "updated_at": datetime.utcnow()}}
         )
 

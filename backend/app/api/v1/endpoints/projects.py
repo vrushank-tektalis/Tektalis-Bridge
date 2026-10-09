@@ -72,4 +72,4 @@ async def get_project_activity(project_id: str, skip: int = 0, limit: int = 50, 
 async def set_requirements(project_id: str, data: dict, current_user=Depends(get_current_user)):
     if current_user["role"] not in ["CLIENT", "ADMIN"]:
         raise HTTPException(status_code=403, detail="Not authorized")
-    return await project_service.set_requirements(project_id, data, str(current_user["_id"]))
+    return await project_service.set_requirements(project_id, data, str(current_user["_id"]), current_user["role"])

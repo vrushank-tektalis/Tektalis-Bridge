@@ -35,7 +35,7 @@ async def analyze_project(data: AIAnalyzeRequest, current_user=Depends(get_curre
         result = await ai_service.analyze_project(data.description)
         await db.ai_requests.update_one(
             {"request_id": request_id},
-            {"$set": {"status": "COMPLETED", "ai_response": result.model_dump(), "completed_at": datetime.utcnow()}}
+            {"$set": {"status": "COMPLETED", "ai_response": result, "completed_at": datetime.utcnow()}}
         )
         return {"request_id": request_id, "status": "COMPLETED", "requirements": result}
     except Exception as e:

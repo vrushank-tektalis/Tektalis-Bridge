@@ -16,7 +16,7 @@ export const TASK_STATUS = {
   TODO: 'TODO',
   IN_PROGRESS: 'IN_PROGRESS',
   IN_REVIEW: 'IN_REVIEW',
-  DONE: 'DONE',
+  COMPLETED: 'COMPLETED',
 };
 
 export const BUG_SEVERITY = {

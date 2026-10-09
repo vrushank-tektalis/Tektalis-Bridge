@@ -16,7 +16,8 @@ class DeveloperService:
         self.user_repo = UserRepository()
 
     def _serialize(self, doc: dict) -> dict:
-        doc["id"] = str(doc["_id"])
+        if doc:
+            doc["id"] = str(doc["_id"])
         return doc
 
     async def create_developer(self, data: DeveloperCreate, admin_user_id: str) -> dict:

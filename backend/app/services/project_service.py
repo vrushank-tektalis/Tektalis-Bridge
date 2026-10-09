@@ -211,12 +211,12 @@ class ProjectService:
         docs = await self.project_repo.get_available_for_developers(skip=skip, limit=limit)
         return [self._serialize(d) for d in docs]
 
-    async def set_requirements(self, project_id: str, requirements: dict, client_id: str) -> dict:
+    async def set_requirements(self, project_id: str, requirements: dict, client_id: str, role: str = "CLIENT") -> dict:
         """Store approved AI requirements against a project."""
         proj = await self.project_repo.get_by_id(project_id)
         if not proj:
             raise HTTPException(status_code=404, detail="Project not found")
-        if proj["client_id"] != client_id:
+        if role != "ADMIN" and proj["client_id"] != client_id:
             raise HTTPException(status_code=403, detail="Not authorized")
         update = {
             "requirements": requirements,
